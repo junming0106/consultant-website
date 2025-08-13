@@ -28,7 +28,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8 }}>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
             專業企業顧問
-            <span className="block text-[#38a169]">策略成就未來</span>
+            <span className="block">策略成就未來</span>
           </h1>
         </motion.div>
 
