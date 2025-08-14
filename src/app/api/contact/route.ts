@@ -100,8 +100,17 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 從資料庫取得所有聯絡記錄，按創建時間降序排列
+    // 從資料庫取得所有聯絡記錄，按創建時間降序排列，包含管理員資訊
     const contacts = await prisma.contact.findMany({
+      include: {
+        admin: {
+          select: {
+            id: true,
+            username: true,
+            name: true
+          }
+        }
+      },
       orderBy: {
         createdAt: 'desc'
       }
@@ -125,11 +134,11 @@ function validateSessionToken(token: string): boolean {
   
   try {
     const parts = token.split('_')
-    if (parts.length !== 3) {
+    if (parts.length !== 5) { // admin_id_username_timestamp_randompart
       return false
     }
     
-    const timestamp = parseInt(parts[1])
+    const timestamp = parseInt(parts[3])
     const now = Date.now()
     
     // 檢查是否在 24 小時內

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 專案概述
 
-這是一個企業級顧問服務平台，使用 Next.js 14 (App Router) 開發的響應式網站。專案採用 TypeScript，並整合 Prisma ORM 管理 SQLite 資料庫。
+這是一個企業級顧問服務平台，使用 Next.js 15 (App Router) 開發的響應式網站。專案採用 TypeScript，並整合 Prisma ORM 管理 SQLite 資料庫。
 
 ## 開發環境指令
 
@@ -27,7 +27,7 @@ npx prisma migrate dev  # 建立新的資料庫遷移檔案
 ## 核心架構
 
 ### 技術棧
-- **前端**: Next.js 14, TypeScript, React 19
+- **前端**: Next.js 15, TypeScript, React 19
 - **樣式**: Tailwind CSS 4, CSS Modules
 - **表單處理**: React Hook Form + Zod 驗證
 - **動畫**: Framer Motion
@@ -39,10 +39,14 @@ npx prisma migrate dev  # 建立新的資料庫遷移檔案
 src/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API 路由
-│   │   ├── auth/          # 驗證相關 API
-│   │   └── contact/       # 聯絡表單 API
+│   │   ├── auth/          # 驗證相關 API (login, logout, verify, register)
+│   │   ├── contact/       # 聯絡表單 API
+│   │   ├── contacts/      # 聯絡管理 API
+│   │   └── prospects/     # 潛在客戶管理 API
 │   ├── admin/             # 管理頁面
 │   ├── manage-dashboard/  # 管理儀表板
+│   │   ├── login/         # 管理員登入頁面
+│   │   └── register/      # 管理員註冊頁面
 │   └── page.tsx          # 首頁
 ├── components/
 │   ├── ui/               # 基礎 UI 元件 (Button, Input, Card 等)
@@ -53,9 +57,21 @@ src/
 ```
 
 ### 資料庫 Schema
+- **Admin 模型**: 管理員帳號資料
+  - 必填: username (唯一), password, name
+  - 關聯: contacts[], prospects[]
+  - 自動時間戳記: createdAt, updatedAt
 - **Contact 模型**: 儲存聯絡表單資料
   - 必填: name, email, phone, service, message
-  - 選填: company, budget
+  - 選填: company, budget, notes, adminId
+  - 狀態管理: status (new, contacted, qualified, closed)
+  - 關聯: admin (處理的管理員)
+  - 自動時間戳記: createdAt, updatedAt
+- **Prospect 模型**: 儲存潛在客戶電話資料
+  - 必填: phone
+  - 選填: notes, adminId
+  - 狀態管理: status (prospect, contacted, converted)
+  - 關聯: admin (處理的管理員)
   - 自動時間戳記: createdAt, updatedAt
 
 ## 開發重點
@@ -67,9 +83,12 @@ src/
 - 防護機制: 輸入長度限制、格式驗證
 
 ### 管理系統
-- 簡易 session-based 認證 (24小時有效期)
+- 帳號密碼認證系統 (24小時有效期)
+- 支援多管理員註冊與登入
 - 管理員可查看所有聯絡表單提交記錄
-- Session token 格式: `admin_timestamp_hash`
+- 記錄追蹤：聯絡人和潛在客戶會標記處理的管理員
+- Session token 格式: `admin_id_username_timestamp_hash`
+- 預設管理員帳號: admin/admin
 
 ### UI/UX 特色
 - 響應式設計，支援桌面、平板、手機

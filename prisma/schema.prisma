@@ -21,10 +21,27 @@ model Contact {
   message   String
   status    String   @default("new") // new, contacted, qualified, closed
   notes     String?
+  adminId   Int?     // 標記是哪個管理員處理的
+  admin     Admin?   @relation(fields: [adminId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("contacts")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  contacts  Contact[]
+  prospects Prospect[]
+
+  @@map("admins")
 }
 
 model Prospect {
@@ -32,6 +49,8 @@ model Prospect {
   phone     String
   status    String   @default("prospect") // prospect, contacted, converted
   notes     String?
+  adminId   Int?     // 標記是哪個管理員處理的
+  admin     Admin?   @relation(fields: [adminId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -17,6 +17,11 @@ interface Contact {
   notes: string | null;
   createdAt: string;
   updatedAt: string;
+  admin?: {
+    id: number;
+    username: string;
+    name: string;
+  } | null;
 }
 
 interface Prospect {
@@ -26,6 +31,11 @@ interface Prospect {
   notes: string | null;
   createdAt: string;
   updatedAt: string;
+  admin?: {
+    id: number;
+    username: string;
+    name: string;
+  } | null;
 }
 
 export default function AdminPage() {
@@ -36,15 +46,20 @@ export default function AdminPage() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
   const [authChecking, setAuthChecking] = useState(true);
+  const [currentAdmin, setCurrentAdmin] = useState<{
+    id: number;
+    username: string;
+    name: string;
+  } | null>(null);
   const router = useRouter();
 
   const checkAuthentication = useCallback(async () => {
     try {
       const response = await fetch("/api/auth/verify");
       if (response.ok) {
-        setAuthenticated(true);
+        const data = await response.json();
+        setCurrentAdmin(data.admin);
         fetchContacts();
         fetchProspects();
       } else {
@@ -71,7 +86,7 @@ export default function AdminPage() {
       } else {
         setError("無法載入聯絡記錄");
       }
-    } catch (error) {
+    } catch {
       setError("網路連接錯誤");
     } finally {
       setLoading(false);
@@ -87,8 +102,8 @@ export default function AdminPage() {
       } else {
         console.error("無法載入潛在客戶");
       }
-    } catch (error) {
-      console.error("載入潛在客戶網路錯誤:", error);
+    } catch (err) {
+      console.error("載入潛在客戶網路錯誤:", err);
     }
   };
 
@@ -166,7 +181,7 @@ export default function AdminPage() {
       } else {
         setError("更新狀態失敗");
       }
-    } catch (error) {
+    } catch {
       setError("網路錯誤");
     }
   };
@@ -188,8 +203,8 @@ export default function AdminPage() {
       } else {
         console.error("更新潛在客戶狀態失敗");
       }
-    } catch (error) {
-      console.error("網路錯誤");
+    } catch (err) {
+      console.error("網路錯誤", err);
     }
   };
 
@@ -206,7 +221,7 @@ export default function AdminPage() {
       } else {
         setError("刪除失敗");
       }
-    } catch (error) {
+    } catch {
       setError("網路錯誤");
     }
   };
@@ -224,8 +239,8 @@ export default function AdminPage() {
       } else {
         console.error("刪除潛在客戶失敗");
       }
-    } catch (error) {
-      console.error("網路錯誤");
+    } catch (err) {
+      console.error("網路錯誤", err);
     }
   };
 
@@ -233,8 +248,8 @@ export default function AdminPage() {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
       router.push("/manage-dashboard/login");
-    } catch (error) {
-      console.error("登出失敗:", error);
+    } catch (err) {
+      console.error("登出失敗:", err);
     }
   };
 
@@ -263,6 +278,11 @@ export default function AdminPage() {
               客戶管理系統
             </h1>
             <p className="text-gray-600">管理正式客戶和潛在客戶</p>
+            {currentAdmin && (
+              <p className="text-sm text-[#3182ce] mt-1">
+                歡迎，{currentAdmin.name} ({currentAdmin.username})
+              </p>
+            )}
           </div>
           <Button onClick={handleLogout} variant="secondary" size="sm">
             登出
@@ -392,6 +412,17 @@ export default function AdminPage() {
                             {getStatusText(contact.status)}
                           </span>
                         </div>
+
+                        {contact.admin && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-gray-700">
+                              處理人員:
+                            </span>
+                            <span className="text-sm text-[#3182ce]">
+                              {contact.admin.name} ({contact.admin.username})
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       <div>
@@ -501,6 +532,11 @@ export default function AdminPage() {
                     <span className="text-sm text-gray-500">
                       {formatTimestamp(prospect.createdAt)}
                     </span>
+                    {prospect.admin && (
+                      <span className="text-xs text-[#3182ce]">
+                        處理人: {prospect.admin.name}
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center space-x-2">

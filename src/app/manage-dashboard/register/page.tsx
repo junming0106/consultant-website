@@ -5,35 +5,42 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button, Input } from '@/components/ui'
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const router = useRouter()
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setSuccess('')
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, name })
       })
 
+      const data = await response.json()
+
       if (response.ok) {
-        router.push('/manage-dashboard')
+        setSuccess('管理員註冊成功！即將跳轉至登入頁面...')
+        setTimeout(() => {
+          router.push('/manage-dashboard/login')
+        }, 2000)
       } else {
-        const data = await response.json()
-        setError(data.error || '登入失敗')
+        setError(data.error || '註冊失敗')
       }
     } catch (error) {
-      console.error('登入錯誤:', error)
+      console.error('註冊錯誤:', error)
       setError('網路連接錯誤')
     } finally {
       setIsLoading(false)
@@ -50,10 +57,10 @@ export default function LoginPage() {
       >
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-[#1a202c] mb-2">
-            管理員登入
+            註冊管理員
           </h1>
           <p className="text-gray-600">
-            請輸入帳號密碼以存取管理介面
+            建立新的管理員帳號
           </p>
         </div>
 
@@ -67,7 +74,17 @@ export default function LoginPage() {
           </motion.div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        {success && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm"
+          >
+            {success}
+          </motion.div>
+        )}
+
+        <form onSubmit={handleRegister} className="space-y-6">
           <Input
             type="text"
             label="帳號"
@@ -75,7 +92,7 @@ export default function LoginPage() {
             onChange={(e) => setUsername(e.target.value)}
             required
             disabled={isLoading}
-            placeholder="請輸入帳號"
+            placeholder="輸入帳號 (至少3個字元)"
           />
 
           <Input
@@ -85,7 +102,17 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             disabled={isLoading}
-            placeholder="請輸入密碼"
+            placeholder="輸入密碼 (至少6個字元)"
+          />
+
+          <Input
+            type="text"
+            label="姓名"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            disabled={isLoading}
+            placeholder="輸入管理員姓名"
           />
 
           <Button
@@ -93,19 +120,19 @@ export default function LoginPage() {
             variant="primary"
             size="lg"
             className="w-full"
-            disabled={isLoading || !username.trim() || !password.trim()}
+            disabled={isLoading || !username.trim() || !password.trim() || !name.trim()}
           >
-            {isLoading ? '登入中...' : '登入'}
+            {isLoading ? '註冊中...' : '註冊'}
           </Button>
         </form>
 
         <div className="mt-6 text-center space-y-2">
           <div>
             <button
-              onClick={() => router.push('/manage-dashboard/register')}
+              onClick={() => router.push('/manage-dashboard/login')}
               className="text-[#3182ce] hover:text-[#2c5aa0] text-sm transition-colors"
             >
-              註冊新管理員
+              已有帳號？前往登入
             </button>
           </div>
           <div>

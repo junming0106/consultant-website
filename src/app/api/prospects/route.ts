@@ -12,6 +12,15 @@ const createProspectSchema = z.object({
 export async function GET() {
   try {
     const prospects = await prisma.prospect.findMany({
+      include: {
+        admin: {
+          select: {
+            id: true,
+            username: true,
+            name: true
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     })
 

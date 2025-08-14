@@ -1,29 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomBytes } from 'crypto'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json()
+    const { username, password } = await request.json()
     
-    // 從環境變數取得管理密碼
-    const adminPassword = process.env.ADMIN_PASSWORD
-    
-    // 確保管理密碼已設定且符合最低安全要求
-    if (!adminPassword || adminPassword.length < 8) {
-      console.error('ADMIN_PASSWORD 未設定或過短，至少需要 8 個字元')
+    if (!username || !password) {
       return NextResponse.json(
-        { error: '伺服器配置錯誤' },
-        { status: 500 }
+        { error: '請輸入帳號和密碼' },
+        { status: 400 }
       )
     }
     
-    if (password === adminPassword) {
-      // 建立 session token（簡易版本）
-      const sessionToken = generateSessionToken()
+    // 從資料庫查詢管理員
+    const admin = await prisma.admin.findUnique({
+      where: { username }
+    })
+    
+    if (!admin) {
+      return NextResponse.json(
+        { error: '帳號或密碼錯誤' },
+        { status: 401 }
+      )
+    }
+    
+    // 驗證密碼（在實際生產環境中應該使用加密密碼比對）
+    if (password === admin.password) {
+      // 建立 session token，包含管理員 ID
+      const sessionToken = generateSessionToken(admin.id, admin.username)
       
       // 設定 cookie
       const response = NextResponse.json(
-        { success: true, message: '登入成功' },
+        { 
+          success: true, 
+          message: '登入成功',
+          admin: {
+            id: admin.id,
+            username: admin.username,
+            name: admin.name
+          }
+        },
         { status: 200 }
       )
       
@@ -38,7 +55,7 @@ export async function POST(request: NextRequest) {
       return response
     } else {
       return NextResponse.json(
-        { error: '密碼錯誤' },
+        { error: '帳號或密碼錯誤' },
         { status: 401 }
       )
     }
@@ -52,8 +69,8 @@ export async function POST(request: NextRequest) {
 }
 
 // 加密安全的 session token 生成器
-function generateSessionToken(): string {
+function generateSessionToken(adminId: number, username: string): string {
   const timestamp = Date.now().toString()
   const randomPart = randomBytes(32).toString('hex')
-  return `admin_${timestamp}_${randomPart}`
+  return `admin_${adminId}_${username}_${timestamp}_${randomPart}`
 }

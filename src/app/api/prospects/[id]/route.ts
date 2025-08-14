@@ -2,6 +2,34 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
+// 從 session token 取得管理員 ID
+function getAdminIdFromToken(token: string): number | null {
+  if (!token.startsWith('admin_')) {
+    return null
+  }
+  
+  try {
+    const parts = token.split('_')
+    if (parts.length !== 5) {
+      return null
+    }
+    
+    const adminId = parseInt(parts[1])
+    const timestamp = parseInt(parts[3])
+    const now = Date.now()
+    
+    // 檢查是否在 24 小時內
+    const twentyFourHours = 24 * 60 * 60 * 1000
+    if ((now - timestamp) >= twentyFourHours) {
+      return null
+    }
+    
+    return adminId
+  } catch {
+    return null
+  }
+}
+
 const updateProspectSchema = z.object({
   status: z.enum(['prospect', 'contacted', 'converted']).optional(),
   notes: z.string().optional()
@@ -33,12 +61,17 @@ export async function PATCH(
     }
 
     const { status, notes } = validationResult.data
+    
+    // 取得管理員 ID
+    const sessionToken = request.cookies.get('admin-session')?.value
+    const adminId = sessionToken ? getAdminIdFromToken(sessionToken) : null
 
     const updatedProspect = await prisma.prospect.update({
       where: { id: prospectId },
       data: {
         ...(status && { status }),
         ...(notes !== undefined && { notes }),
+        adminId, // 標記是哪個管理員處理的
         updatedAt: new Date()
       }
     })
