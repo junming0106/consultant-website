@@ -1,34 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { validateSessionToken } from '@/lib/auth'
 
-// 從 session token 取得管理員資訊
-function getAdminInfoFromToken(token: string): { adminId: number; username: string } | null {
-  if (!token.startsWith('admin_')) {
-    return null
-  }
-  
-  try {
-    const parts = token.split('_')
-    if (parts.length !== 5) {
-      return null
-    }
-    
-    const adminId = parseInt(parts[1])
-    const username = parts[2]
-    const timestamp = parseInt(parts[3])
-    const now = Date.now()
-    
-    // 檢查是否在 24 小時內
-    const twentyFourHours = 24 * 60 * 60 * 1000
-    if ((now - timestamp) >= twentyFourHours) {
-      return null
-    }
-    
-    return { adminId, username }
-  } catch {
-    return null
-  }
-}
 
 export async function DELETE(
   request: NextRequest,
@@ -37,7 +10,7 @@ export async function DELETE(
   try {
     // 驗證 session 和 superadmin 權限
     const sessionToken = request.cookies.get('admin-session')?.value
-    const adminInfo = sessionToken ? getAdminInfoFromToken(sessionToken) : null
+    const adminInfo = sessionToken ? await validateSessionToken(sessionToken) : null
     
     if (!adminInfo) {
       return NextResponse.json(
@@ -65,7 +38,7 @@ export async function DELETE(
     }
 
     // 防止刪除自己
-    if (adminIdToDelete === adminInfo.adminId) {
+    if (adminIdToDelete === adminInfo.id) {
       return NextResponse.json(
         { error: '不能刪除自己的帳號' },
         { status: 400 }
@@ -116,7 +89,7 @@ export async function DELETE(
       deletedName: adminToDelete.name,
       contactsAffected: adminToDelete._count.contacts,
       prospectsAffected: adminToDelete._count.prospects,
-      deletedBy: adminInfo.adminId,
+      deletedBy: adminInfo.id,
       deletedByUsername: adminInfo.username,
       timestamp: new Date().toISOString()
     })

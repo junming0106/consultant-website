@@ -33,9 +33,9 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (response.ok) {
-        setSuccess('管理員註冊成功！即將跳轉至登入頁面...')
+        setSuccess('管理員註冊成功！即將跳轉至管理頁面...')
         setTimeout(() => {
-          router.push('/manage-dashboard/login')
+          router.push('/manage-dashboard')
         }, 2000)
       } else {
         setError(data.error || '註冊失敗')
@@ -140,10 +140,10 @@ export default function RegisterPage() {
         <div className="mt-6 text-center space-y-2">
           <div>
             <button
-              onClick={() => router.push('/manage-dashboard/login')}
+              onClick={() => router.push('/manage-dashboard')}
               className="text-[#3182ce] hover:text-[#2c5aa0] text-sm transition-colors"
             >
-              已有帳號？前往登入
+              ← 返回管理頁面
             </button>
           </div>
           <div>
@@ -151,7 +151,7 @@ export default function RegisterPage() {
               onClick={() => router.push('/')}
               className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
             >
-              ← 回到首頁
+              回到首頁
             </button>
           </div>
         </div>

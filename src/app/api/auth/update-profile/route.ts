@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { validateJwtToken } from '@/lib/auth'
 
 // 定義更改帳號資訊驗證 schema
 const updateProfileSchema = z.object({
@@ -9,39 +11,12 @@ const updateProfileSchema = z.object({
   currentPassword: z.string().min(1, '請輸入目前密碼進行驗證'),
 })
 
-// 從 session token 取得管理員 ID
-function getAdminIdFromToken(token: string): number | null {
-  if (!token.startsWith('admin_')) {
-    return null
-  }
-  
-  try {
-    const parts = token.split('_')
-    if (parts.length !== 5) {
-      return null
-    }
-    
-    const adminId = parseInt(parts[1])
-    const timestamp = parseInt(parts[3])
-    const now = Date.now()
-    
-    // 檢查是否在 24 小時內
-    const twentyFourHours = 24 * 60 * 60 * 1000
-    if ((now - timestamp) >= twentyFourHours) {
-      return null
-    }
-    
-    return adminId
-  } catch {
-    return null
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
     // 驗證 session
     const sessionToken = request.cookies.get('admin-session')?.value
-    const adminId = sessionToken ? getAdminIdFromToken(sessionToken) : null
+    const adminId = sessionToken ? validateJwtToken(sessionToken) : null
     
     if (!adminId) {
       return NextResponse.json(
@@ -78,7 +53,8 @@ export async function POST(request: NextRequest) {
     }
     
     // 驗證目前密碼
-    if (admin.password !== currentPassword) {
+    const isPasswordValid = await bcrypt.compare(currentPassword, admin.password)
+    if (!isPasswordValid) {
       return NextResponse.json(
         { error: '密碼錯誤，無法更改帳號資訊' },
         { status: 401 }

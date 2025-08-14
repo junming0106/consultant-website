@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 
 // 定義註冊表單驗證 schema
@@ -28,14 +29,13 @@ export async function POST(request: NextRequest) {
     const { username, password, name, adminPassword } = validationResult.data
     
     // 驗證管理員密碼 - 只有 superadmin 可以註冊新管理員
-    const validAdmin = await prisma.admin.findFirst({
+    const superAdmin = await prisma.admin.findFirst({
       where: { 
-        password: adminPassword,
         username: 'superadmin' // 只有 superadmin 可以註冊新管理員
       }
     })
     
-    if (!validAdmin) {
+    if (!superAdmin || !await bcrypt.compare(adminPassword, superAdmin.password)) {
       return NextResponse.json(
         { error: '只有超級管理員可以註冊新管理員' },
         { status: 403 }
@@ -54,11 +54,14 @@ export async function POST(request: NextRequest) {
       )
     }
     
+    // 加密密碼
+    const hashedPassword = await bcrypt.hash(password, 12)
+    
     // 建立新管理員
     const newAdmin = await prisma.admin.create({
       data: {
         username,
-        password, // 在實際生產環境中應該加密密碼
+        password: hashedPassword,
         name,
       },
       select: {

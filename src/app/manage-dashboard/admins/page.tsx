@@ -9,8 +9,8 @@ interface Admin {
   id: number;
   username: string;
   name: string;
-  password: string;
-  actualPassword: string;
+  passwordStatus: string;
+  isEncrypted: boolean;
   passwordLength: number;
   createdAt: string;
   updatedAt: string;
@@ -25,8 +25,10 @@ export default function AdminsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [showPasswords, setShowPasswords] = useState(false);
+  const [showPasswordDetails, setShowPasswordDetails] = useState(false);
   const [deletingAdminId, setDeletingAdminId] = useState<number | null>(null);
+  const [resettingAdminId, setResettingAdminId] = useState<number | null>(null);
+  const [resetPasswordResult, setResetPasswordResult] = useState<{adminId: number, newPassword: string} | null>(null);
   const router = useRouter();
 
   const checkAuthAndFetchAdmins = useCallback(async () => {
@@ -76,6 +78,56 @@ export default function AdminsPage() {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const handleResetPassword = async (
+    adminId: number,
+    adminName: string,
+    username: string
+  ) => {
+    // 確認對話框
+    const confirmMessage = `確定要重置管理員「${adminName} (${username})」的密碼嗎？\n\n注意：\n- 將生成新的隨機密碼\n- 該管理員需要使用新密碼重新登入\n- 新密碼僅顯示一次，請妥善記錄`
+
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
+    setResettingAdminId(adminId);
+    setError("");
+    setSuccess("");
+    setResetPasswordResult(null);
+
+    try {
+      const response = await fetch(`/api/admins/${adminId}/reset-password`, {
+        method: "POST",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResetPasswordResult({
+          adminId: adminId,
+          newPassword: data.newPassword
+        });
+        setSuccess(`管理員「${adminName}」密碼重置成功！`);
+
+        // 重新載入管理員列表
+        checkAuthAndFetchAdmins();
+
+        // 10秒後清除密碼顯示
+        setTimeout(() => {
+          setResetPasswordResult(null);
+          setSuccess("");
+        }, 10000);
+      } else {
+        setError(data.error || "重置密碼失敗");
+      }
+    } catch (error) {
+      console.error("重置密碼錯誤:", error);
+      setError("網路連接錯誤");
+    } finally {
+      setResettingAdminId(null);
+    }
   };
 
   const handleDeleteAdmin = async (
@@ -147,10 +199,10 @@ export default function AdminsPage() {
           </div>
           <div className="flex items-center space-x-4">
             <Button
-              onClick={() => setShowPasswords(!showPasswords)}
-              variant={showPasswords ? "primary" : "secondary"}
+              onClick={() => setShowPasswordDetails(!showPasswordDetails)}
+              variant={showPasswordDetails ? "primary" : "secondary"}
               size="sm">
-              {showPasswords ? "隱藏密碼" : "顯示密碼"}
+              {showPasswordDetails ? "隱藏密碼詳情" : "顯示密碼詳情"}
             </Button>
             <Button
               onClick={() => router.push("/manage-dashboard")}
@@ -199,20 +251,37 @@ export default function AdminsPage() {
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="font-medium text-gray-700">密碼:</span>
-                      <span className="font-mono text-gray-900">
-                        {showPasswords ? admin.actualPassword : admin.password}
+                      <span className="font-medium text-gray-700">密碼狀態:</span>
+                      <span className={`font-mono ${admin.isEncrypted ? 'text-green-600' : 'text-red-600'}`}>
+                        {admin.passwordStatus}
                       </span>
                     </div>
 
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-700">
-                        密碼長度:
-                      </span>
-                      <span className="text-gray-900">
-                        {admin.passwordLength} 字元
-                      </span>
-                    </div>
+                    {showPasswordDetails && (
+                      <div className="flex justify-between">
+                        <span className="font-medium text-gray-700">
+                          密碼長度:
+                        </span>
+                        <span className="text-gray-900">
+                          {admin.passwordLength} 字元
+                        </span>
+                      </div>
+                    )}
+
+                    {/* 顯示重置後的新密碼 */}
+                    {resetPasswordResult && resetPasswordResult.adminId === admin.id && (
+                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div className="text-sm font-medium text-yellow-800 mb-1">
+                          🔑 新密碼 (僅顯示一次)
+                        </div>
+                        <div className="font-mono text-lg text-yellow-900 bg-yellow-100 p-2 rounded border select-all">
+                          {resetPasswordResult.newPassword}
+                        </div>
+                        <div className="text-xs text-yellow-600 mt-1">
+                          請複製並安全保存此密碼，10秒後自動隱藏
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex justify-between">
                       <span className="font-medium text-gray-700">
@@ -239,24 +308,43 @@ export default function AdminsPage() {
                       <div>最後更新: {formatDate(admin.updatedAt)}</div>
                     </div>
 
-                    {/* 刪除按鈕 - 不能刪除自己(superadmin) */}
+                    {/* 管理按鈕 - 不能操作自己(superadmin) */}
                     {admin.username !== "superadmin" && (
-                      <Button
-                        onClick={() =>
-                          handleDeleteAdmin(
-                            admin.id,
-                            admin.name,
-                            admin.username
-                          )
-                        }
-                        variant="secondary"
-                        size="sm"
-                        className="w-full text-red-600 hover:text-red-800 hover:bg-red-50 border-red-200"
-                        disabled={deletingAdminId === admin.id}>
-                        {deletingAdminId === admin.id
-                          ? "刪除中..."
-                          : "刪除管理員"}
-                      </Button>
+                      <div className="space-y-2">
+                        <Button
+                          onClick={() =>
+                            handleResetPassword(
+                              admin.id,
+                              admin.name,
+                              admin.username
+                            )
+                          }
+                          variant="secondary"
+                          size="sm"
+                          className="w-full text-blue-600 hover:text-blue-800 hover:bg-blue-50 border-blue-200"
+                          disabled={resettingAdminId === admin.id}>
+                          {resettingAdminId === admin.id
+                            ? "重置中..."
+                            : "🔄 重置密碼"}
+                        </Button>
+                        
+                        <Button
+                          onClick={() =>
+                            handleDeleteAdmin(
+                              admin.id,
+                              admin.name,
+                              admin.username
+                            )
+                          }
+                          variant="secondary"
+                          size="sm"
+                          className="w-full text-red-600 hover:text-red-800 hover:bg-red-50 border-red-200"
+                          disabled={deletingAdminId === admin.id}>
+                          {deletingAdminId === admin.id
+                            ? "刪除中..."
+                            : "🗑️ 刪除管理員"}
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -271,13 +359,13 @@ export default function AdminsPage() {
           </Card>
         )}
 
-        <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="text-sm font-medium text-yellow-800 mb-2">
-            🔒 安全提醒
+        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="text-sm font-medium text-blue-800 mb-2">
+            🔒 密碼安全說明
           </h3>
-          <p className="text-sm text-yellow-700">
-            此頁面顯示系統中所有管理員的詳細資訊，包括實際密碼。請妥善保管這些資訊，避免洩露給未授權人員。
-            建議定期更新管理員密碼以維護系統安全。
+          <p className="text-sm text-blue-700">
+            系統使用 bcrypt 加密儲存密碼，無法還原為原始密碼。這是業界標準的安全做法。
+            如需重設管理員密碼，請使用「註冊新管理員」功能或要求管理員自行修改密碼。
           </p>
         </div>
       </div>

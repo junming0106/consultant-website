@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { randomBytes } from 'crypto'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
@@ -25,10 +26,22 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // 驗證密碼（在實際生產環境中應該使用加密密碼比對）
-    if (password === admin.password) {
-      // 建立 session token，包含管理員 ID
-      const sessionToken = generateSessionToken(admin.id, admin.username)
+    // 驗證加密密碼
+    const isPasswordValid = await bcrypt.compare(password, admin.password)
+    if (isPasswordValid) {
+      // 建立 JWT token
+      const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production'
+      const token = jwt.sign(
+        { 
+          adminId: admin.id,
+          username: admin.username
+        },
+        jwtSecret,
+        { 
+          expiresIn: '24h',
+          issuer: 'consultant-website'
+        }
+      )
       
       // 設定 cookie
       const response = NextResponse.json(
@@ -45,7 +58,7 @@ export async function POST(request: NextRequest) {
       )
       
       // 設定 HTTP-only cookie，有效期 24 小時
-      response.cookies.set('admin-session', sessionToken, {
+      response.cookies.set('admin-session', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -68,9 +81,3 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// 加密安全的 session token 生成器
-function generateSessionToken(adminId: number, username: string): string {
-  const timestamp = Date.now().toString()
-  const randomPart = randomBytes(32).toString('hex')
-  return `admin_${adminId}_${username}_${timestamp}_${randomPart}`
-}

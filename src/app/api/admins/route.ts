@@ -1,40 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { validateSessionToken } from '@/lib/auth'
 
-// 從 session token 取得管理員資訊
-function getAdminInfoFromToken(token: string): { adminId: number; username: string } | null {
-  if (!token.startsWith('admin_')) {
-    return null
-  }
-  
-  try {
-    const parts = token.split('_')
-    if (parts.length !== 5) {
-      return null
-    }
-    
-    const adminId = parseInt(parts[1])
-    const username = parts[2]
-    const timestamp = parseInt(parts[3])
-    const now = Date.now()
-    
-    // 檢查是否在 24 小時內
-    const twentyFourHours = 24 * 60 * 60 * 1000
-    if ((now - timestamp) >= twentyFourHours) {
-      return null
-    }
-    
-    return { adminId, username }
-  } catch {
-    return null
-  }
-}
 
 export async function GET(request: NextRequest) {
   try {
     // 驗證 session 和 superadmin 權限
     const sessionToken = request.cookies.get('admin-session')?.value
-    const adminInfo = sessionToken ? getAdminInfoFromToken(sessionToken) : null
+    const adminInfo = sessionToken ? await validateSessionToken(sessionToken) : null
     
     if (!adminInfo) {
       return NextResponse.json(
@@ -72,17 +45,18 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    // 處理密碼顯示（顯示實際密碼以便查看）
+    // 處理密碼顯示（bcrypt 加密後無法還原，僅顯示狀態）
     const adminsWithPasswordInfo = admins.map(admin => ({
       ...admin,
       passwordLength: admin.password.length,
-      actualPassword: admin.password, // 顯示實際密碼
-      password: '●'.repeat(admin.password.length) // 遮罩顯示
+      passwordStatus: admin.password.startsWith('$2') ? '已加密' : '未加密',
+      isEncrypted: admin.password.startsWith('$2'),
+      password: undefined // 不返回加密後的密碼
     }))
 
     console.log('管理員列表查詢成功:', {
       count: admins.length,
-      requestBy: adminInfo.adminId,
+      requestBy: adminInfo.id,
       requestByUsername: adminInfo.username
     })
 

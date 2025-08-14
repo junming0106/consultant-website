@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import xss from 'xss'
+import { validateJwtToken } from '@/lib/auth'
 
 // 定義輸入驗證架構
 const contactSchema = z.object({
@@ -51,17 +53,20 @@ export async function POST(request: NextRequest) {
     
     const validatedData = validationResult.data
 
-    // 使用 Prisma 儲存已驗證的資料到資料庫
+    // 清理用戶輸入以防XSS攻擊
+    const sanitizedData = {
+      name: xss(validatedData.name),
+      email: xss(validatedData.email), 
+      phone: xss(validatedData.phone),
+      service: validatedData.service, // 枚舉值已驗證，不需清理
+      company: validatedData.company ? xss(validatedData.company) : null,
+      budget: validatedData.budget || null, // 枚舉值已驗證，不需清理
+      message: xss(validatedData.message),
+    }
+
+    // 使用 Prisma 儲存已驗證和清理的資料到資料庫
     const contact = await prisma.contact.create({
-      data: {
-        name: validatedData.name,
-        email: validatedData.email,
-        phone: validatedData.phone,
-        service: validatedData.service,
-        company: validatedData.company || null,
-        budget: validatedData.budget || null,
-        message: validatedData.message,
-      }
+      data: sanitizedData
     })
 
     console.log('新的聯絡表單提交成功', { 
@@ -73,8 +78,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { 
         success: true, 
-        message: '感謝您的聯絡！我們將盡快回覆您。',
-        data: contact
+        message: '感謝您的聯絡！我們將盡快回覆您。'
       },
       { status: 200 }
     )
@@ -93,7 +97,9 @@ export async function GET(request: NextRequest) {
   try {
     // 驗證管理員權限
     const sessionToken = request.cookies.get('admin-session')?.value
-    if (!sessionToken || !validateSessionToken(sessionToken)) {
+    const adminId = sessionToken ? validateJwtToken(sessionToken) : null
+    
+    if (!adminId) {
       return NextResponse.json(
         { error: '需要管理員權限' },
         { status: 401 }
@@ -126,25 +132,3 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// 驗證 session token
-function validateSessionToken(token: string): boolean {
-  if (!token.startsWith('admin_')) {
-    return false
-  }
-  
-  try {
-    const parts = token.split('_')
-    if (parts.length !== 5) { // admin_id_username_timestamp_randompart
-      return false
-    }
-    
-    const timestamp = parseInt(parts[3])
-    const now = Date.now()
-    
-    // 檢查是否在 24 小時內
-    const twentyFourHours = 24 * 60 * 60 * 1000
-    return (now - timestamp) < twentyFourHours
-  } catch {
-    return false
-  }
-}

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { validateJwtToken } from '@/lib/auth'
 
 // 定義更改密碼驗證 schema
 const changePasswordSchema = z.object({
@@ -8,39 +10,12 @@ const changePasswordSchema = z.object({
   newPassword: z.string().min(6, '新密碼至少需要6個字元').max(100, '新密碼不能超過100個字元'),
 })
 
-// 從 session token 取得管理員 ID
-function getAdminIdFromToken(token: string): number | null {
-  if (!token.startsWith('admin_')) {
-    return null
-  }
-  
-  try {
-    const parts = token.split('_')
-    if (parts.length !== 5) {
-      return null
-    }
-    
-    const adminId = parseInt(parts[1])
-    const timestamp = parseInt(parts[3])
-    const now = Date.now()
-    
-    // 檢查是否在 24 小時內
-    const twentyFourHours = 24 * 60 * 60 * 1000
-    if ((now - timestamp) >= twentyFourHours) {
-      return null
-    }
-    
-    return adminId
-  } catch {
-    return null
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
     // 驗證 session
     const sessionToken = request.cookies.get('admin-session')?.value
-    const adminId = sessionToken ? getAdminIdFromToken(sessionToken) : null
+    const adminId = sessionToken ? validateJwtToken(sessionToken) : null
     
     if (!adminId) {
       return NextResponse.json(
@@ -85,18 +60,22 @@ export async function POST(request: NextRequest) {
     }
     
     // 驗證目前密碼
-    if (admin.password !== currentPassword) {
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, admin.password)
+    if (!isCurrentPasswordValid) {
       return NextResponse.json(
         { error: '目前密碼錯誤' },
         { status: 401 }
       )
     }
     
+    // 加密新密碼
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12)
+    
     // 更新密碼
     await prisma.admin.update({
       where: { id: adminId },
       data: {
-        password: newPassword,
+        password: hashedNewPassword,
         updatedAt: new Date()
       }
     })
