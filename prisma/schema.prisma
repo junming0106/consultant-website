@@ -19,8 +19,21 @@ model Contact {
   company   String?
   budget    String?
   message   String
+  status    String   @default("new") // new, contacted, qualified, closed
+  notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("contacts")
+}
+
+model Prospect {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  status    String   @default("prospect") // prospect, contacted, converted
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("prospects")
 }

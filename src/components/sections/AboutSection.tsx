@@ -6,22 +6,26 @@ import { Button } from "@/components/ui";
 
 const achievements = [
   {
-    icon: "🏆",
+    icon: <i className="fa-solid fa-trophy" style={{ color: "#FFD43B" }}></i>,
     title: "業界領導者",
     description: "15年豐富經驗，深耕企業顧問服務領域，累積超過500個成功案例。",
   },
   {
-    icon: "🎯",
+    icon: (
+      <i className="fa-solid fa-crosshairs" style={{ color: "#FF0000" }}></i>
+    ),
     title: "精準策略",
     description: "針對不同產業特性，量身打造最適合的策略方案與執行計畫。",
   },
   {
-    icon: "🤝",
+    icon: (
+      <i className="fa-solid fa-handshake" style={{ color: "#FFD43B" }}></i>
+    ),
     title: "長期夥伴",
     description: "95%客戶滿意度，超過80%的客戶選擇持續合作，建立長期信任關係。",
   },
   {
-    icon: "⚡",
+    icon: <i className="fa-solid fa-bolt" style={{ color: "#FFD43B" }}></i>,
     title: "快速回應",
     description: "24小時內回應諮詢需求，快速啟動專案，把握最佳時機。",
   },

@@ -66,10 +66,19 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">聯絡資訊</h4>
             <ul className="space-y-2 text-gray-300">
-              <li>📞 +886 2 1234 5678</li>
-              <li>✉️ contact@consultant.com</li>
-              <li>📍 台北市信義區信義路五段7號</li>
-              <li>⏰ 週一至週五 9:00 - 18:00</li>
+              <li>
+                <i className="fa-solid fa-phone"></i> +886 2 1234 5678
+              </li>
+              <li>
+                <i className="fa-solid fa-envelope"></i> contact@consultant.com
+              </li>
+              <li>
+                <i className="fa-solid fa-location-dot"></i>
+                台北市信義區信義路五段7號
+              </li>
+              <li>
+                <i className="fa-solid fa-clock"></i> 週一至週五 9:00 - 18:00
+              </li>
             </ul>
           </div>
         </div>
