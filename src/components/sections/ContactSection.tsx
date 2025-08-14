@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { Button, Card, Input, Textarea } from '@/components/ui'
+import styles from './ContactSection.module.css'
 
 interface FormData {
   name: string
@@ -60,33 +61,33 @@ export default function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className={styles.section}>
+      <div className={styles.container}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className={styles.header}
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1a202c] mb-6">
+          <h2 className={styles.title}>
             聯絡我們
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className={styles.subtitle}>
             準備開始您的企業轉型之旅？立即與我們聯繫，
             獲得專業的顧問建議與客製化解決方案
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className={styles.grid}>
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <Card className="p-8">
-              <h3 className="text-2xl font-semibold text-[#1a202c] mb-6">
+            <Card className={styles.formCard}>
+              <h3 className={styles.formTitle}>
                 取得專業諮詢
               </h3>
               
@@ -94,7 +95,7 @@ export default function ContactSection() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 bg-[#38a169]/10 border border-[#38a169]/20 rounded-lg text-[#38a169]"
+                  className={styles.successMessage}
                 >
                   感謝您的聯絡！我們將在 24 小時內回覆您。
                 </motion.div>
@@ -104,14 +105,14 @@ export default function ContactSection() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-6 p-4 bg-[#e53e3e]/10 border border-[#e53e3e]/20 rounded-lg text-[#e53e3e]"
+                  className={styles.errorMessage}
                 >
                   提交失敗，請稍後再試或直接聯絡我們。
                 </motion.div>
               )}
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+                <div className={styles.formRow}>
                   <Input
                     label="姓名"
                     required
@@ -137,7 +138,7 @@ export default function ContactSection() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={styles.formRow}>
                   <Input
                     label="聯絡電話"
                     type="tel"
@@ -148,13 +149,13 @@ export default function ContactSection() {
                     error={errors.phone?.message}
                   />
                   
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#1a202c]">
-                      服務類型 <span className="text-[#e53e3e] ml-1">*</span>
+                  <div className={styles.selectContainer}>
+                    <label className={styles.selectLabel}>
+                      服務類型 <span className={styles.selectRequired}>*</span>
                     </label>
                     <select
                       {...register('service', { required: '請選擇服務類型' })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#3182ce] focus:border-transparent"
+                      className={styles.select}
                     >
                       <option value="">請選擇服務類型</option>
                       <option value="strategy">企業策略規劃</option>
@@ -165,24 +166,24 @@ export default function ContactSection() {
                       <option value="finance">財務規劃顧問</option>
                     </select>
                     {errors.service && (
-                      <p className="text-sm text-[#e53e3e]">{errors.service.message}</p>
+                      <p className={styles.selectError}>{errors.service.message}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={styles.formRow}>
                   <Input
                     label="公司名稱"
                     {...register('company')}
                   />
                   
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-[#1a202c]">
+                  <div className={styles.selectContainer}>
+                    <label className={styles.selectLabel}>
                       預算範圍
                     </label>
                     <select
                       {...register('budget')}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#3182ce] focus:border-transparent"
+                      className={styles.select}
                     >
                       <option value="">請選擇預算範圍</option>
                       <option value="under-50k">50萬以下</option>
@@ -208,7 +209,7 @@ export default function ContactSection() {
                   type="submit"
                   variant="primary"
                   size="lg"
-                  className="w-full"
+                  className={styles.submitButton}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? '提交中...' : '提交諮詢需求'}
@@ -222,66 +223,66 @@ export default function ContactSection() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="space-y-8"
+            className={styles.contactInfo}
           >
-            <Card className="p-8">
-              <h3 className="text-2xl font-semibold text-[#1a202c] mb-6">
+            <Card className={styles.infoCard}>
+              <h3 className={styles.infoTitle}>
                 聯絡資訊
               </h3>
               
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">📞</div>
-                  <div>
-                    <h4 className="font-semibold text-[#1a202c] mb-2">電話</h4>
-                    <p className="text-gray-600">+886 2 1234 5678</p>
+              <div className={styles.infoList}>
+                <div className={styles.infoItem}>
+                  <div className={styles.infoIcon}>📞</div>
+                  <div className={styles.infoContent}>
+                    <h4 className={styles.infoLabel}>電話</h4>
+                    <p className={styles.infoText}>+886 2 1234 5678</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">✉️</div>
-                  <div>
-                    <h4 className="font-semibold text-[#1a202c] mb-2">電子郵件</h4>
-                    <p className="text-gray-600">contact@consultant.com</p>
+                <div className={styles.infoItem}>
+                  <div className={styles.infoIcon}>✉️</div>
+                  <div className={styles.infoContent}>
+                    <h4 className={styles.infoLabel}>電子郵件</h4>
+                    <p className={styles.infoText}>contact@consultant.com</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">📍</div>
-                  <div>
-                    <h4 className="font-semibold text-[#1a202c] mb-2">地址</h4>
-                    <p className="text-gray-600">台北市信義區信義路五段7號</p>
+                <div className={styles.infoItem}>
+                  <div className={styles.infoIcon}>📍</div>
+                  <div className={styles.infoContent}>
+                    <h4 className={styles.infoLabel}>地址</h4>
+                    <p className={styles.infoText}>台北市信義區信義路五段7號</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">⏰</div>
-                  <div>
-                    <h4 className="font-semibold text-[#1a202c] mb-2">服務時間</h4>
-                    <p className="text-gray-600">週一至週五 9:00 - 18:00</p>
+                <div className={styles.infoItem}>
+                  <div className={styles.infoIcon}>⏰</div>
+                  <div className={styles.infoContent}>
+                    <h4 className={styles.infoLabel}>服務時間</h4>
+                    <p className={styles.infoText}>週一至週五 9:00 - 18:00</p>
                   </div>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-8 bg-gradient-to-br from-[#1a365d] to-[#3182ce] text-white">
-              <h3 className="text-xl font-semibold mb-4">
+            <Card className={styles.whyCard}>
+              <h3 className={styles.whyTitle}>
                 為什麼選擇我們？
               </h3>
-              <ul className="space-y-3 text-gray-200">
-                <li className="flex items-center space-x-2">
+              <ul className={styles.whyList}>
+                <li className={styles.whyItem}>
                   <span>✓</span>
                   <span>15+ 年豐富經驗</span>
                 </li>
-                <li className="flex items-center space-x-2">
+                <li className={styles.whyItem}>
                   <span>✓</span>
                   <span>500+ 成功案例</span>
                 </li>
-                <li className="flex items-center space-x-2">
+                <li className={styles.whyItem}>
                   <span>✓</span>
                   <span>95% 客戶滿意度</span>
                 </li>
-                <li className="flex items-center space-x-2">
+                <li className={styles.whyItem}>
                   <span>✓</span>
                   <span>24小時快速回應</span>
                 </li>

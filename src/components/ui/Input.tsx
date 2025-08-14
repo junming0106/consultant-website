@@ -1,41 +1,33 @@
-import { forwardRef, InputHTMLAttributes } from 'react'
+import { forwardRef, InputHTMLAttributes } from "react";
+import styles from "./Input.module.css";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string
-  error?: string
-  required?: boolean
+  label?: string;
+  error?: string;
+  required?: boolean;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(({
-  label,
-  error,
-  required,
-  className = '',
-  ...props
-}, ref) => {
-  const baseClasses = 'w-full px-4 py-3 border rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#3182ce] focus:border-transparent'
-  const errorClasses = error ? 'border-[#e53e3e] focus:ring-[#e53e3e]' : 'border-gray-300'
-  
-  return (
-    <div className="space-y-2">
-      {label && (
-        <label className="block text-sm font-medium text-[#1a202c]">
-          {label}
-          {required && <span className="text-[#e53e3e] ml-1">*</span>}
-        </label>
-      )}
-      <input
-        ref={ref}
-        className={`${baseClasses} ${errorClasses} ${className}`}
-        {...props}
-      />
-      {error && (
-        <p className="text-sm text-[#e53e3e]">{error}</p>
-      )}
-    </div>
-  )
-})
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, required, className = "", ...props }, ref) => {
+    const inputClass = `${styles.input} ${
+      error ? styles.inputError : ""
+    } text-gray-900 ${className}`;
 
-Input.displayName = 'Input'
+    return (
+      <div className={styles.container}>
+        {label && (
+          <label className={styles.label}>
+            {label}
+            {required && <span className={styles.required}>*</span>}
+          </label>
+        )}
+        <input ref={ref} className={inputClass} {...props} />
+        {error && <p className={styles.error}>{error}</p>}
+      </div>
+    );
+  }
+);
 
-export default Input
+Input.displayName = "Input";
+
+export default Input;

@@ -72,14 +72,14 @@ export default function HeroSection() {
             onClick={scrollToContact}
             variant="accent"
             size="lg"
-            className="w-full sm:w-auto bg-[#38a169] hover:bg-[#2f8755] transform hover:scale-105 transition-all duration-300 shadow-2xl text-lg px-8 py-4">
-            免費諮詢
+            className="w-full sm:w-auto bg-gradient-to-r from-[#d4a574] to-[#c5935e] hover:from-[#c5935e] hover:to-[#b8854c] shadow-2xl hover:shadow-3xl text-lg px-8 py-4 font-semibold">
+            立即預約諮詢
           </Button>
           <Button
             onClick={scrollToServices}
             variant="secondary"
             size="lg"
-            className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-[#1a365d] transition-all duration-300 backdrop-blur-sm bg-white/10 shadow-2xl text-lg px-8 py-4">
+            className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-[#1a365d] backdrop-blur-sm bg-white/10 shadow-2xl hover:shadow-3xl text-lg px-8 py-4">
             了解服務
           </Button>
         </motion.div>
@@ -89,62 +89,58 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-4xl mx-auto">
-          <motion.div
-            className="group hover:scale-110 transition-all duration-300 bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20"
-            whileHover={{ y: -5 }}>
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 group-hover: drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               500+
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
               服務企業
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="group hover:scale-110 transition-all duration-300 bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20"
-            whileHover={{ y: -5 }}>
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 group-hover: drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               15+
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
               年經驗
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="group hover:scale-110 transition-all duration-300 bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20"
-            whileHover={{ y: -5 }}>
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 group-hover: drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               95%
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
               滿意度
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="group hover:scale-110 transition-all duration-300 bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20"
-            whileHover={{ y: -5 }}>
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 group-hover: drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
+            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               24h
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
               快速回應
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
 
       {/* 滾動提示 */}
       <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}>
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
         <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center bg-white/10 backdrop-blur-sm shadow-lg">
           <motion.div
             className="w-1 h-3 bg-white rounded-full mt-2"
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}></motion.div>
+            animate={{ opacity: [1, 0.5, 1] }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}></motion.div>
         </div>
       </motion.div>
     </section>

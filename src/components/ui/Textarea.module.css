@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.required {
+  color: #e53e3e;
+  margin-left: 0.25rem;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  outline: none;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.textarea:focus {
+  outline: 2px solid #3182ce;
+  outline-offset: -2px;
+  border-color: transparent;
+}
+
+.textareaError {
+  border-color: #e53e3e;
+}
+
+.textareaError:focus {
+  outline-color: #e53e3e;
+}
+
+.error {
+  font-size: 0.875rem;
+  color: #e53e3e;
+}

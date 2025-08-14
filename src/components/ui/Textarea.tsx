@@ -1,4 +1,5 @@
 import { forwardRef, TextareaHTMLAttributes } from 'react'
+import styles from './Textarea.module.css'
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
@@ -13,24 +14,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   className = '',
   ...props
 }, ref) => {
-  const baseClasses = 'w-full px-4 py-3 border rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#3182ce] focus:border-transparent resize-vertical min-h-[120px]'
-  const errorClasses = error ? 'border-[#e53e3e] focus:ring-[#e53e3e]' : 'border-gray-300'
+  const textareaClass = `${styles.textarea} ${error ? styles.textareaError : ''} text-gray-900 ${className}`
   
   return (
-    <div className="space-y-2">
+    <div className={styles.container}>
       {label && (
-        <label className="block text-sm font-medium text-[#1a202c]">
+        <label className={styles.label}>
           {label}
-          {required && <span className="text-[#e53e3e] ml-1">*</span>}
+          {required && <span className={styles.required}>*</span>}
         </label>
       )}
       <textarea
         ref={ref}
-        className={`${baseClasses} ${errorClasses} ${className}`}
+        className={textareaClass}
         {...props}
       />
       {error && (
-        <p className="text-sm text-[#e53e3e]">{error}</p>
+        <p className={styles.error}>{error}</p>
       )}
     </div>
   )

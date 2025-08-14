@@ -1,0 +1,72 @@
+.button {
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.button:focus {
+  outline: 2px solid;
+  outline-offset: 2px;
+}
+
+.primary {
+  background: #1a365d;
+  color: white;
+}
+
+.primary:hover:not(:disabled) {
+  background: #2d5a87;
+}
+
+.primary:focus {
+  outline-color: #1a365d;
+}
+
+.secondary {
+  background: #3182ce;
+  color: white;
+}
+
+.secondary:hover:not(:disabled) {
+  background: #2c5aa0;
+}
+
+.secondary:focus {
+  outline-color: #3182ce;
+}
+
+.accent {
+  background: linear-gradient(to right, #d4a574, #c5935e);
+  color: white;
+}
+
+.accent:hover:not(:disabled) {
+  background: linear-gradient(to right, #c5935e, #b8854c);
+}
+
+.accent:focus {
+  outline-color: #d4a574;
+}
+
+.small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.medium {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+}
+
+.large {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
