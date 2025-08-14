@@ -39,14 +39,17 @@ npx prisma migrate dev  # 建立新的資料庫遷移檔案
 src/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API 路由
-│   │   ├── auth/          # 驗證相關 API (login, logout, verify, register)
+│   │   ├── auth/          # 驗證相關 API (login, logout, verify, register, change-password, update-profile)
+│   │   ├── admins/        # 管理員列表 API (僅 superadmin)
 │   │   ├── contact/       # 聯絡表單 API
 │   │   ├── contacts/      # 聯絡管理 API
 │   │   └── prospects/     # 潛在客戶管理 API
 │   ├── admin/             # 管理頁面
 │   ├── manage-dashboard/  # 管理儀表板
 │   │   ├── login/         # 管理員登入頁面
-│   │   └── register/      # 管理員註冊頁面
+│   │   ├── register/      # 管理員註冊頁面 (僅 superadmin 可見)
+│   │   ├── admins/        # 管理員列表頁面 (僅 superadmin 可見)
+│   │   └── settings/      # 管理員帳號設定頁面
 │   └── page.tsx          # 首頁
 ├── components/
 │   ├── ui/               # 基礎 UI 元件 (Button, Input, Card 等)
@@ -85,10 +88,15 @@ src/
 ### 管理系統
 - 帳號密碼認證系統 (24小時有效期)
 - 支援多管理員註冊與登入
+- **權限分級**: 
+  - `superadmin`: 超級管理員，可查看所有管理員密碼、註冊新管理員、刪除管理員
+  - 一般管理員: 只能使用帳號設定功能
+- **安全註冊**: 只有 superadmin 可以註冊新管理員
+- **帳號管理**: 管理員可自行更改密碼、帳號名稱和顯示姓名
 - 管理員可查看所有聯絡表單提交記錄
 - 記錄追蹤：聯絡人和潛在客戶會標記處理的管理員
 - Session token 格式: `admin_id_username_timestamp_hash`
-- 預設管理員帳號: admin/admin
+- 預設管理員帳號: superadmin/newadmin123 (超級管理員)
 
 ### UI/UX 特色
 - 響應式設計，支援桌面、平板、手機

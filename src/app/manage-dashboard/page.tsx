@@ -284,9 +284,36 @@ export default function AdminPage() {
               </p>
             )}
           </div>
-          <Button onClick={handleLogout} variant="secondary" size="sm">
-            登出
-          </Button>
+          <div className="flex items-center space-x-3">
+            {currentAdmin?.username === 'superadmin' && (
+              <>
+                <Button 
+                  onClick={() => router.push('/manage-dashboard/admins')}
+                  variant="secondary" 
+                  size="sm"
+                >
+                  管理員列表
+                </Button>
+                <Button 
+                  onClick={() => router.push('/manage-dashboard/register')}
+                  variant="secondary" 
+                  size="sm"
+                >
+                  註冊管理員
+                </Button>
+              </>
+            )}
+            <Button 
+              onClick={() => router.push('/manage-dashboard/settings')}
+              variant="secondary" 
+              size="sm"
+            >
+              帳號設定
+            </Button>
+            <Button onClick={handleLogout} variant="secondary" size="sm">
+              登出
+            </Button>
+          </div>
         </div>
 
         {error && (

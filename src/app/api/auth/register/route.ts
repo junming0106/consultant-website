@@ -7,6 +7,7 @@ const registerSchema = z.object({
   username: z.string().min(3, '帳號至少需要3個字元').max(50, '帳號不能超過50個字元'),
   password: z.string().min(6, '密碼至少需要6個字元').max(100, '密碼不能超過100個字元'),
   name: z.string().min(1, '請輸入姓名').max(100, '姓名不能超過100個字元'),
+  adminPassword: z.string().min(1, '請輸入管理員密碼進行驗證'),
 })
 
 export async function POST(request: NextRequest) {
@@ -17,14 +18,29 @@ export async function POST(request: NextRequest) {
     const validationResult = registerSchema.safeParse(body)
     
     if (!validationResult.success) {
-      const errors = validationResult.error.errors.map(err => err.message).join(', ')
+      const errors = validationResult.error.issues.map(issue => issue.message).join(', ')
       return NextResponse.json(
         { error: errors },
         { status: 400 }
       )
     }
     
-    const { username, password, name } = validationResult.data
+    const { username, password, name, adminPassword } = validationResult.data
+    
+    // 驗證管理員密碼 - 只有 superadmin 可以註冊新管理員
+    const validAdmin = await prisma.admin.findFirst({
+      where: { 
+        password: adminPassword,
+        username: 'superadmin' // 只有 superadmin 可以註冊新管理員
+      }
+    })
+    
+    if (!validAdmin) {
+      return NextResponse.json(
+        { error: '只有超級管理員可以註冊新管理員' },
+        { status: 403 }
+      )
+    }
     
     // 檢查帳號是否已存在
     const existingAdmin = await prisma.admin.findUnique({

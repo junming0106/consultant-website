@@ -9,6 +9,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [adminPassword, setAdminPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -26,7 +27,7 @@ export default function RegisterPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password, name })
+        body: JSON.stringify({ username, password, name, adminPassword })
       })
 
       const data = await response.json()
@@ -60,7 +61,7 @@ export default function RegisterPage() {
             註冊管理員
           </h1>
           <p className="text-gray-600">
-            建立新的管理員帳號
+            建立新的管理員帳號（需要現有管理員密碼驗證）
           </p>
         </div>
 
@@ -115,12 +116,22 @@ export default function RegisterPage() {
             placeholder="輸入管理員姓名"
           />
 
+          <Input
+            type="password"
+            label="管理員密碼"
+            value={adminPassword}
+            onChange={(e) => setAdminPassword(e.target.value)}
+            required
+            disabled={isLoading}
+            placeholder="輸入現有管理員密碼進行驗證"
+          />
+
           <Button
             type="submit"
             variant="primary"
             size="lg"
             className="w-full"
-            disabled={isLoading || !username.trim() || !password.trim() || !name.trim()}
+            disabled={isLoading || !username.trim() || !password.trim() || !name.trim() || !adminPassword.trim()}
           >
             {isLoading ? '註冊中...' : '註冊'}
           </Button>

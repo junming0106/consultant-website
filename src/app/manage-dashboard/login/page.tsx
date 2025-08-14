@@ -99,23 +99,13 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="mt-6 text-center space-y-2">
-          <div>
-            <button
-              onClick={() => router.push('/manage-dashboard/register')}
-              className="text-[#3182ce] hover:text-[#2c5aa0] text-sm transition-colors"
-            >
-              註冊新管理員
-            </button>
-          </div>
-          <div>
-            <button
-              onClick={() => router.push('/')}
-              className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
-            >
-              ← 回到首頁
-            </button>
-          </div>
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => router.push('/')}
+            className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+          >
+            ← 回到首頁
+          </button>
         </div>
       </motion.div>
     </div>
