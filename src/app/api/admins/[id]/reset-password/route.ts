@@ -46,7 +46,7 @@ export async function POST(
     }
 
     // 檢查是否為 superadmin
-    if (adminInfo.username !== 'superadmin') {
+    if (adminInfo.role !== 'superadmin') {
       return NextResponse.json(
         { error: '只有超級管理員可以重置其他管理員密碼' },
         { status: 403 }

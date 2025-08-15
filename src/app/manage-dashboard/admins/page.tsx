@@ -9,6 +9,7 @@ interface Admin {
   id: number;
   username: string;
   name: string;
+  role: string;
   passwordStatus: string;
   isEncrypted: boolean;
   passwordLength: number;
@@ -22,6 +23,12 @@ interface Admin {
 
 export default function AdminsPage() {
   const [admins, setAdmins] = useState<Admin[]>([]);
+  const [currentAdmin, setCurrentAdmin] = useState<{
+    id: number;
+    username: string;
+    name: string;
+    role: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -44,9 +51,10 @@ export default function AdminsPage() {
       }
 
       const authData = await authResponse.json();
+      setCurrentAdmin(authData.admin);
 
       // 檢查是否為 superadmin
-      if (authData.admin?.username !== "superadmin") {
+      if (authData.admin?.role !== "superadmin") {
         setError("只有超級管理員可以查看管理員列表");
         setLoading(false);
         return;
@@ -281,7 +289,7 @@ export default function AdminsPage() {
                       resetPasswordResult.adminId === admin.id && (
                         <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                           <div className="text-sm font-medium text-yellow-800 mb-1">
-                            🔑 新密碼 (僅顯示一次)
+                            新密碼 (僅顯示一次, 請先複製起, 登入後進行重設密碼)
                           </div>
                           <div className="font-mono text-lg text-yellow-900 bg-yellow-100 p-2 rounded border select-all">
                             {resetPasswordResult.newPassword}
@@ -317,8 +325,8 @@ export default function AdminsPage() {
                       <div>最後更新: {formatDate(admin.updatedAt)}</div>
                     </div>
 
-                    {/* 管理按鈕 - 不能操作自己(superadmin) */}
-                    {admin.username !== "superadmin" && (
+                    {/* 管理按鈕 - 不能操作自己 */}
+                    {admin.id !== currentAdmin?.id && (
                       <div className="space-y-2">
                         <Button
                           onClick={() =>

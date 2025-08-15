@@ -8,6 +8,7 @@ export interface AdminInfo {
   id: number
   username: string
   name: string
+  role: string
   createdAt: Date
 }
 
@@ -27,6 +28,7 @@ export async function validateSessionToken(token: string): Promise<AdminInfo | n
           id: true,
           username: true,
           name: true,
+          role: true,
           createdAt: true
         }
       })
@@ -63,6 +65,7 @@ export async function validateSessionToken(token: string): Promise<AdminInfo | n
           id: true,
           username: true,
           name: true,
+          role: true,
           createdAt: true
         }
       })

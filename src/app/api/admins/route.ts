@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 檢查是否為 superadmin
-    if (adminInfo.username !== 'superadmin') {
+    if (adminInfo.role !== 'superadmin') {
       return NextResponse.json(
         { error: '只有超級管理員可以查看管理員列表' },
         { status: 403 }
@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
         id: true,
         username: true,
         name: true,
+        role: true,
         password: true, // 暫時包含密碼以顯示
         createdAt: true,
         updatedAt: true,

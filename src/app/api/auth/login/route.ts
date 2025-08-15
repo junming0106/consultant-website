@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
           admin: {
             id: admin.id,
             username: admin.username,
-            name: admin.name
+            name: admin.name,
+            role: admin.role
           }
         },
         { status: 200 }

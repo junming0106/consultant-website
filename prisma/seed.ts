@@ -1,20 +1,38 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  // 建立預設管理員帳號
-  const defaultAdmin = await prisma.admin.upsert({
-    where: { username: 'admin' },
-    update: {},
+  // 從環境變數讀取管理員資訊
+  const adminUsername = process.env.ADMIN_username || 'superadmin'
+  const adminName = process.env.ADMIN_name || '超級管理員'
+  const adminPassword = process.env.ADMIN_PASSWORD || 'defaultpassword'
+  
+  // 加密密碼
+  const hashedPassword = await bcrypt.hash(adminPassword, 12)
+  
+  // 建立超級管理員帳號
+  const superAdmin = await prisma.admin.upsert({
+    where: { username: adminUsername },
+    update: {
+      password: hashedPassword,
+      name: adminName,
+      role: "superadmin", // 設定為超級管理員
+    },
     create: {
-      username: 'admin',
-      password: 'admin', // 在實際生產環境中應該使用加密密碼
-      name: '預設管理員',
+      username: adminUsername,
+      password: hashedPassword,
+      name: adminName,
+      role: "superadmin", // 設定為超級管理員
     },
   })
 
-  console.log('預設管理員帳號已建立:', defaultAdmin)
+  console.log('超級管理員帳號已建立/更新:', {
+    username: superAdmin.username,
+    name: superAdmin.name,
+    id: superAdmin.id
+  })
 }
 
 main()

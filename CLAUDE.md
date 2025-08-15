@@ -31,7 +31,7 @@ npx prisma migrate dev  # 建立新的資料庫遷移檔案
 - **樣式**: Tailwind CSS 4, CSS Modules
 - **表單處理**: React Hook Form + Zod 驗證
 - **動畫**: Framer Motion
-- **資料庫**: SQLite + Prisma ORM
+- **資料庫**: PostgreSQL (Vercel SQL) + Prisma ORM
 - **部署**: 設計為 Vercel 部署
 
 ### 檔案結構
@@ -134,7 +134,7 @@ src/
 
 ### 環境變數
 ```bash
-DATABASE_URL="file:./dev.db"    # SQLite 資料庫位置
+DATABASE_URL="postgresql://user:password@host:port/database?sslmode=require"  # Vercel Postgres 連線字串
 NODE_ENV="production"           # 生產環境
 ```
 

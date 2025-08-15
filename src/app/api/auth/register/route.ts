@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     // 驗證管理員密碼 - 只有 superadmin 可以註冊新管理員
     const superAdmin = await prisma.admin.findFirst({
       where: { 
-        username: 'superadmin' // 只有 superadmin 可以註冊新管理員
+        role: 'superadmin' // 只有 superadmin 可以註冊新管理員
       }
     })
     

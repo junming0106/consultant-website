@@ -20,7 +20,7 @@ export async function DELETE(
     }
 
     // 檢查是否為 superadmin
-    if (adminInfo.username !== 'superadmin') {
+    if (adminInfo.role !== 'superadmin') {
       return NextResponse.json(
         { error: '只有超級管理員可以刪除管理員' },
         { status: 403 }

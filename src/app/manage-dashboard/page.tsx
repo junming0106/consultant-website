@@ -51,6 +51,7 @@ export default function AdminPage() {
     id: number;
     username: string;
     name: string;
+    role: string;
   } | null>(null);
   const router = useRouter();
 
@@ -285,7 +286,7 @@ export default function AdminPage() {
             )}
           </div>
           <div className="flex items-center space-x-3">
-            {currentAdmin?.username === 'superadmin' && (
+            {currentAdmin?.role === 'superadmin' && (
               <>
                 <Button 
                   onClick={() => router.push('/manage-dashboard/admins')}
