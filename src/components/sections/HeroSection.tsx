@@ -18,7 +18,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="min-h-screen relative flex items-center justify-center overflow-hidden">
+      className="min-h-screen relative flex items-center justify-center overflow-hidden pt-14 sm:pt-16">
       {/* 建築背景圖片 */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -88,9 +88,9 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-4xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 text-center max-w-4xl mx-auto px-4">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 md:p-6 shadow-2xl border border-white/20">
+            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               500+
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
@@ -98,8 +98,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 md:p-6 shadow-2xl border border-white/20">
+            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               15+
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
@@ -107,8 +107,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 md:p-6 shadow-2xl border border-white/20">
+            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               95%
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">
@@ -116,8 +116,8 @@ export default function HeroSection() {
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
-            <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 sm:p-4 md:p-6 shadow-2xl border border-white/20">
+            <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#d4a574] mb-2 drop-shadow-lg">
               24h
             </div>
             <div className="text-sm md:text-base text-gray-200 font-medium">

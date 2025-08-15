@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: 100;
   transition: all 0.2s ease;
 }
 
@@ -20,7 +20,7 @@
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 0.75rem;
 }
 
 @media (min-width: 640px) {
@@ -39,7 +39,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 4rem;
+  height: 3.5rem;
+}
+
+@media (min-width: 640px) {
+  .content {
+    height: 4rem;
+  }
 }
 
 .logo {
@@ -47,9 +53,15 @@
 }
 
 .logoText {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   transition: color 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .logoText {
+    font-size: 1.5rem;
+  }
 }
 
 .logoTextScrolled {
@@ -167,8 +179,10 @@
 
 .mobileMenu {
   display: block;
-  background: white;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
   border-top: 1px solid #e5e7eb;
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -178,9 +192,7 @@
 }
 
 .mobileMenuContent {
-  padding: 0.5rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.75rem;
+  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -208,5 +220,6 @@
 }
 
 .mobileButtonContainer {
-  padding: 0.75rem;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
 }

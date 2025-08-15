@@ -167,26 +167,29 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1a202c] mb-2">帳號設定</h1>
-            {currentAdmin && (
-              <p className="text-gray-600">
-                管理 {currentAdmin.name} ({currentAdmin.username}) 的帳號設定
-              </p>
-            )}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1a202c] mb-2">帳號設定</h1>
+              {currentAdmin && (
+                <p className="text-gray-600 text-sm sm:text-base">
+                  管理 {currentAdmin.name} ({currentAdmin.username}) 的帳號設定
+                </p>
+              )}
+            </div>
+            <Button
+              onClick={() => router.push("/manage-dashboard")}
+              variant="secondary"
+              size="sm"
+              className="w-full sm:w-auto">
+              ← 回到管理面板
+            </Button>
           </div>
-          <Button
-            onClick={() => router.push("/manage-dashboard")}
-            variant="secondary"
-            size="sm">
-            ← 回到管理面板
-          </Button>
         </div>
 
         {/* 分頁選單 */}
         <div className="mb-6 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+          <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
             <button
               onClick={() => setActiveTab("profile")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${

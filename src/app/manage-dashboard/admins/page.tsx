@@ -215,26 +215,30 @@ export default function AdminsPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1a202c] mb-2">
-              管理員列表
-            </h1>
-            <p className="text-gray-600">查看和管理所有系統管理員</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={() => setShowPasswordDetails(!showPasswordDetails)}
-              variant={showPasswordDetails ? "primary" : "secondary"}
-              size="sm">
-              {showPasswordDetails ? "隱藏密碼詳情" : "顯示密碼詳情"}
-            </Button>
-            <Button
-              onClick={() => router.push("/manage-dashboard")}
-              variant="secondary"
-              size="sm">
-              ← 回到管理面板
-            </Button>
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1a202c] mb-2">
+                管理員列表
+              </h1>
+              <p className="text-gray-600">查看和管理所有系統管理員</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+              <Button
+                onClick={() => setShowPasswordDetails(!showPasswordDetails)}
+                variant={showPasswordDetails ? "primary" : "secondary"}
+                size="sm"
+                className="w-full sm:w-auto">
+                {showPasswordDetails ? "隱藏密碼詳情" : "顯示密碼詳情"}
+              </Button>
+              <Button
+                onClick={() => router.push("/manage-dashboard")}
+                variant="secondary"
+                size="sm"
+                className="w-full sm:w-auto">
+                ← 回到管理面板
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -253,7 +257,7 @@ export default function AdminsPage() {
           </motion.div>
         )}
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {admins.map((admin) => (
             <motion.div
               key={admin.id}

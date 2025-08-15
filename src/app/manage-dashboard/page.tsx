@@ -287,44 +287,53 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-[#1a202c] mb-2">
-              客戶管理系統
-            </h1>
-            <p className="text-gray-600">管理正式客戶和潛在客戶</p>
-            {currentAdmin && (
-              <p className="text-sm text-[#3182ce] mt-1">
-                歡迎，{currentAdmin.name} ({currentAdmin.username})
-              </p>
-            )}
-          </div>
-          <div className="flex items-center space-x-3">
-            {currentAdmin?.role === "superadmin" && (
-              <>
-                <Button
-                  onClick={() => router.push("/manage-dashboard/admins")}
-                  variant="secondary"
-                  size="sm">
-                  管理員列表
-                </Button>
-                <Button
-                  onClick={() => router.push("/manage-dashboard/register")}
-                  variant="secondary"
-                  size="sm">
-                  註冊管理員
-                </Button>
-              </>
-            )}
-            <Button
-              onClick={() => router.push("/manage-dashboard/settings")}
-              variant="secondary"
-              size="sm">
-              帳號設定
-            </Button>
-            <Button onClick={handleLogout} variant="secondary" size="sm">
-              登出
-            </Button>
+        <div className="mb-8">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#1a202c] mb-2">
+                客戶管理系統
+              </h1>
+              <p className="text-gray-600">管理正式客戶和潛在客戶</p>
+              {currentAdmin && (
+                <p className="text-sm text-[#3182ce] mt-1">
+                  歡迎，{currentAdmin.name} ({currentAdmin.username})
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              {currentAdmin?.role === "superadmin" && (
+                <>
+                  <Button
+                    onClick={() => router.push("/manage-dashboard/admins")}
+                    variant="secondary"
+                    size="sm"
+                    className="w-full sm:w-auto">
+                    管理員列表
+                  </Button>
+                  <Button
+                    onClick={() => router.push("/manage-dashboard/register")}
+                    variant="secondary"
+                    size="sm"
+                    className="w-full sm:w-auto">
+                    註冊管理員
+                  </Button>
+                </>
+              )}
+              <Button
+                onClick={() => router.push("/manage-dashboard/settings")}
+                variant="secondary"
+                size="sm"
+                className="w-full sm:w-auto">
+                帳號設定
+              </Button>
+              <Button 
+                onClick={handleLogout} 
+                variant="secondary" 
+                size="sm"
+                className="w-full sm:w-auto">
+                登出
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -335,7 +344,7 @@ export default function AdminPage() {
         )}
 
         <div className="mb-6 border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+          <nav className="-mb-px flex space-x-4 sm:space-x-8 overflow-x-auto">
             <button
               onClick={() => setActiveTab("contacts")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -377,9 +386,9 @@ export default function AdminPage() {
             <div className="space-y-6">
               {contacts.map((contact) => (
                 <Card key={contact.id} className="p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
                     <div className="lg:col-span-2 space-y-4">
-                      <div className="flex justify-between items-start">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                         <h3 className="text-lg font-semibold text-[#1a202c]">
                           {contact.name}
                         </h3>
@@ -555,30 +564,32 @@ export default function AdminPage() {
           <div className="space-y-4">
             {prospects.map((prospect) => (
               <Card key={prospect.id} className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                     <a
                       href={`tel:${prospect.phone}`}
                       className="text-lg font-medium text-[#3182ce] hover:underline">
                       {prospect.phone}
                     </a>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
-                        prospect.status
-                      )}`}>
-                      {getStatusText(prospect.status)}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {formatTimestamp(prospect.createdAt)}
-                    </span>
-                    {prospect.admin && (
-                      <span className="text-xs text-[#3182ce]">
-                        處理人: {prospect.admin.name}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                          prospect.status
+                        )}`}>
+                        {getStatusText(prospect.status)}
                       </span>
-                    )}
+                      <span className="text-sm text-gray-500">
+                        {formatTimestamp(prospect.createdAt)}
+                      </span>
+                      {prospect.admin && (
+                        <span className="text-xs text-[#3182ce]">
+                          處理人: {prospect.admin.name}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <select
                       value={prospect.status}
                       onChange={(e) =>
@@ -588,7 +599,7 @@ export default function AdminPage() {
                           prospect.notes || undefined
                         )
                       }
-                      className="px-3 py-1 border text-gray-900 border-gray-300 rounded text-sm">
+                      className="px-3 py-1 border text-gray-900 border-gray-300 rounded text-sm w-full sm:w-auto">
                       <option value="prospect">潛在客戶</option>
                       <option value="contacted">已聯絡</option>
                       <option value="converted">已轉換</option>
@@ -598,7 +609,7 @@ export default function AdminPage() {
                       onClick={() => deleteProspect(prospect.id)}
                       variant="secondary"
                       size="sm"
-                      className="text-red-600 hover:text-red-800">
+                      className="text-red-600 hover:text-red-800 w-full sm:w-auto">
                       刪除
                     </Button>
                   </div>

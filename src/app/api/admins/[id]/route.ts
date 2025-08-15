@@ -65,23 +65,33 @@ export async function DELETE(
       )
     }
 
-    // 在刪除管理員之前，先將該管理員處理的聯絡人和潛在客戶的 adminId 設為 null
-    await prisma.$transaction([
+    // 在刪除管理員之前，先處理所有相關的外鍵關係
+    await prisma.$transaction(async (tx) => {
       // 將該管理員處理的聯絡人設為未分配
-      prisma.contact.updateMany({
+      await tx.contact.updateMany({
         where: { adminId: adminIdToDelete },
         data: { adminId: null }
-      }),
+      })
+      
       // 將該管理員處理的潛在客戶設為未分配
-      prisma.prospect.updateMany({
+      await tx.prospect.updateMany({
         where: { adminId: adminIdToDelete },
         data: { adminId: null }
-      }),
-      // 刪除管理員
-      prisma.admin.delete({
+      })
+      
+      // 檢查並刪除任何可能的活動日誌記錄 (如果存在)
+      try {
+        await tx.$executeRawUnsafe(`DELETE FROM admin_activity_logs WHERE "adminId" = $1`, adminIdToDelete)
+      } catch (error) {
+        // 如果表不存在，忽略錯誤
+        console.log('admin_activity_logs 表不存在或已清理:', error)
+      }
+      
+      // 最後刪除管理員
+      await tx.admin.delete({
         where: { id: adminIdToDelete }
       })
-    ])
+    })
 
     console.log('管理員刪除成功:', {
       deletedAdminId: adminIdToDelete,
