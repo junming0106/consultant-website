@@ -41,11 +41,11 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 leading-tight">
-            <span className="block text-white drop-shadow-2xl">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-6 leading-relaxed md:leading-tight">
+            <span className="block text-white drop-shadow-2xl mb-2 md:mb-0">
               專業企業顧問
             </span>
-            <span className="block text-white drop-shadow-2xl text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium mt-4">
+            <span className="block text-white drop-shadow-2xl text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium mt-6 md:mt-4">
               策略成就未來
             </span>
           </h1>
